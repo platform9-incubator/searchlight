@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+export SEARCHLIGHT_PASSWORD=searchlightpassword
+source ~/admin_admin.rc
+openstack project create --or-show service --property domain=default
+openstack user create searchlight --password $SEARCHLIGHT_PASSWORD --project service
+openstack role add admin --project service --user searchlight
