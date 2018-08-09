@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+export SEARCHLIGHT_PASSWORD=searchlight
+export DU_FQDN=pf9-rp-jaegertest.platform9.horse
+source ~/admin_admin.rc
+openstack project create --or-show service --property domain=default
+openstack user create searchlight --password $SEARCHLIGHT_PASSWORD --project service
+openstack role add admin --project service --user searchlight
+openstack service create \
+  --name search --description "OpenStack Search" search
+openstack endpoint create --region $OS_REGION_NAME \
+  search --publicurl https://$DU_FQDN/searchlight/  --adminurl https://$DU_FQDN/searchlight/
+
+docker run -d -e SEARCHLIGHT_PASSWORD='searchlight' --net host --name searchlight rparikh/searchlight
+docker run -d  --net host --name elastic elasticsearch:latest
+
+cat > /etc/nginx/conf.d/pf9/locations/nginx-searchlight.conf <<EOL
+location /searchlight/ {
+    proxy_pass http://127.0.0.1:9393/;
+    include /etc/nginx/conf.d/pf9/cors.conf;
+}
+EOL
+
+systemctl restart nginx

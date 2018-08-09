@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+sed -i "s/__SEARCHLIGHT_PASSWORD__/$SEARCHLIGHT_PASSWORD/" /etc/searchlight/searchlight.conf
+uwsgi --http 127.0.0.1:9393 /etc/searchlight/searchlight-uwsgi.ini
