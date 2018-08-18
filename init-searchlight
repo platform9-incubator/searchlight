@@ -11,7 +11,8 @@ openstack endpoint create --region $OS_REGION_NAME \
   search --publicurl https://$DU_FQDN/searchlight/  --adminurl https://$DU_FQDN/searchlight/
 
 docker run -d -e SEARCHLIGHT_PASSWORD='searchlight' --net host --name searchlight rparikh/searchlight
-docker run -d  --net host --name elastic elasticsearch:latest
+# Recommended to use only elastic 2.x for searchlight (5.x doesn't work)
+docker run -d  --net host --name elastic elasticsearch:2.4.6
 
 cat > /etc/nginx/conf.d/pf9/locations/nginx-searchlight.conf <<EOL
 location /searchlight/ {
