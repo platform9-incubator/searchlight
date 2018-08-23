@@ -22,3 +22,4 @@ location /searchlight/ {
 EOL
 
 systemctl restart nginx
+docker exec -t searchlight searchlight-manage index aliases
