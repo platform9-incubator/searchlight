@@ -2,6 +2,8 @@
 export SEARCHLIGHT_PASSWORD=searchlight
 export DU_FQDN=pf9-rp-jaegertest.platform9.horse
 source ~/admin_admin.rc
+pip install --upgrade pip
+pip install python-searchlightclient
 openstack project create --or-show service --property domain=default
 openstack user create searchlight --password $SEARCHLIGHT_PASSWORD --project service
 openstack role add admin --project service --user searchlight
@@ -21,5 +23,8 @@ location /searchlight/ {
 }
 EOL
 
-systemctl restart nginx
+systemctl reload nginx
+openstack search facet list
+openstack search resource type list
+docker exec -t searchlight searchlight-manage index sync --force
 docker exec -t searchlight searchlight-manage index aliases
